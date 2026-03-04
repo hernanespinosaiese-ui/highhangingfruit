@@ -98,7 +98,7 @@ const Index = () => {
               <Button asChild size="lg" className="text-base px-8">
                 <Link to="/request-kit">Request Your Soil Kit</Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="text-base px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
+              <Button asChild variant="outline" size="lg" className="text-base px-8 border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground">
                 <Link to="/platform">Explore the Platform</Link>
               </Button>
             </motion.div>
