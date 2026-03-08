@@ -63,7 +63,7 @@ const FarmOnboarding = ({ onComplete }: FarmOnboardingProps) => {
             <div className="space-y-4">
               <h3 className="font-semibold text-foreground flex items-center gap-2">🌍 Farm Details</h3>
               <Input placeholder="Farm name" value={farmName} onChange={(e) => setFarmName(e.target.value)} />
-              <Input placeholder="Size (acres)" type="number" value={farmSize} onChange={(e) => setFarmSize(e.target.value)} />
+              <Input placeholder="Size (hectares)" type="number" value={farmSize} onChange={(e) => setFarmSize(e.target.value)} />
               <Select value={region} onValueChange={setRegion}>
                 <SelectTrigger><SelectValue placeholder="Select region" /></SelectTrigger>
                 <SelectContent>
