@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Trash2, Rocket } from "lucide-react";
+import { Plus, Trash2, Rocket, User, Lock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,8 @@ interface FarmOnboardingProps {
 }
 
 const FarmOnboarding = ({ onComplete }: FarmOnboardingProps) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [farmName, setFarmName] = useState("");
   const [farmSize, setFarmSize] = useState("");
   const [region, setRegion] = useState("");
@@ -50,9 +52,29 @@ const FarmOnboarding = ({ onComplete }: FarmOnboardingProps) => {
         <Card>
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Set Up Your Farm</CardTitle>
-            <p className="text-muted-foreground text-sm">Tell us about your operation</p>
+            <p className="text-muted-foreground text-sm">Create your account and tell us about your operation</p>
           </CardHeader>
           <CardContent className="space-y-8">
+            {/* Account */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-foreground flex items-center gap-2">
+                <User size={16} /> Account
+              </h3>
+              <Input
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+              />
+              <Input
+                placeholder="Password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
+              />
+            </div>
+
             {/* Farm Details */}
             <div className="space-y-4">
               <h3 className="font-semibold text-foreground flex items-center gap-2">🌍 Farm Details</h3>

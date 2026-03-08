@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Layout from "@/components/Layout";
 import SplashScreen from "@/components/dashboard/SplashScreen";
 import FarmOnboarding from "@/components/onboarding/FarmOnboarding";
@@ -25,23 +25,29 @@ export interface FarmOnboardingData {
   hasSoilKit: boolean;
 }
 
-type State = "splash" | "onboarding" | "dashboard";
+const STORAGE_KEY = "hhf_farm_session";
 
 const Platform = () => {
-  const [state, setState] = useState<State>("splash");
-  const [farmData, setFarmData] = useState<FarmOnboardingData>({
-    farmName: "My Farm",
-    region: "South Asia",
-    farmSize: "",
-    plots: [],
-    hasSoilKit: false,
+  const [state, setState] = useState<"splash" | "onboarding" | "dashboard">(() => {
+    const saved = sessionStorage.getItem(STORAGE_KEY);
+    return saved ? "dashboard" : "splash";
   });
+
+  const [farmData, setFarmData] = useState<FarmOnboardingData>(() => {
+    const saved = sessionStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try { return JSON.parse(saved); } catch { /* fall through */ }
+    }
+    return { farmName: "My Farm", region: "South Asia", farmSize: "", plots: [], hasSoilKit: false };
+  });
+
   const [activeTab, setActiveTab] = useState<PlatformTab>("dashboard");
 
   const handleSplashComplete = useCallback(() => setState("onboarding"), []);
 
   const handleOnboardingComplete = (data: FarmOnboardingData) => {
     setFarmData(data);
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     setState("dashboard");
   };
 
