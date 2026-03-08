@@ -13,11 +13,11 @@ const fadeUp = {
 };
 
 const team = [
-  { name: "Hernán Espinosa", role: "Founder & CEO" },
-  { name: "Ngoc Nguyen", role: "Head of Sales & Marketing" },
-  { name: "María Peguero", role: "Head of External Relations" },
-  { name: "Yan Chen", role: "Head of Engineering" },
-  { name: "Mauricio Acuña", role: "Head of Finance" },
+  { name: "Hernán Espinosa", role: "Founder & CEO", avatar: "👨🏻" },
+  { name: "Ngoc Nguyen", role: "Head of Sales & Marketing", avatar: "👩🏻" },
+  { name: "María Peguero", role: "Head of External Relations", avatar: "👩🏽" },
+  { name: "Yan Chen", role: "Head of Engineering", avatar: "👩🏻" },
+  { name: "Mauricio Acuña", role: "Head of Finance", avatar: "👨🏻" },
 ];
 
 const About = () => {
