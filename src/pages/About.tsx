@@ -13,11 +13,11 @@ const fadeUp = {
 };
 
 const team = [
-  { name: "Hernán Espinosa", role: "Founder & CEO" },
-  { name: "Ngoc Nguyen", role: "Head of Sales & Marketing" },
-  { name: "María Peguero", role: "Head of External Relations" },
-  { name: "Yan Chen", role: "Head of Engineering" },
-  { name: "Mauricio Acuña", role: "Head of Finance" },
+  { name: "Hernán Espinosa", role: "Founder & CEO", avatar: "👨🏻" },
+  { name: "Ngoc Nguyen", role: "Head of Sales & Marketing", avatar: "👩🏻" },
+  { name: "María Peguero", role: "Head of External Relations", avatar: "👩🏽" },
+  { name: "Yan Chen", role: "Head of Engineering", avatar: "👩🏻" },
+  { name: "Mauricio Acuña", role: "Head of Finance", avatar: "👨🏻" },
 ];
 
 const About = () => {
@@ -92,12 +92,12 @@ const About = () => {
       <section className="py-20">
         <div className="container mx-auto px-4 lg:px-8 text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-10">Our Team</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto">
             {team.map((member) => (
-              <Card key={member.role} className="border-none shadow-sm">
+              <Card key={member.role} className="border-none shadow-sm w-full sm:w-[calc(33.333%-1rem)]">
                 <CardContent className="p-6 text-center">
-                  <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-                    <Users size={32} className="text-muted-foreground" />
+                  <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-4 text-2xl">
+                    {member.avatar}
                   </div>
                   <p className="font-semibold text-foreground">{member.name}</p>
                   <p className="text-sm text-muted-foreground">{member.role}</p>
