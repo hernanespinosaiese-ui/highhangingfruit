@@ -3,90 +3,78 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Plus, MapPin, Thermometer, Droplets, Activity, Sun, Wind, Bug } from "lucide-react";
+import { Plus, MapPin, Thermometer, Droplets, Activity, Sun, Wind, Bug, FlaskConical } from "lucide-react";
 import ActionDialog from "./ActionDialog";
+import type { OnboardingPlot } from "@/pages/Platform";
 
-interface PlotDetail {
+interface PlotDisplay {
   name: string;
   variety: string;
-  health: number;
-  moisture: number;
+  health: number | null;
+  moisture: number | null;
   temp: string;
   size: string;
   planted: string;
   lastIrrigation: string;
-  pestRisk: "Low" | "Medium" | "High";
-  ndvi: number;
-  soilPH: number;
+  pestRisk: "Low" | "Medium" | "High" | "Pending";
+  ndvi: number | null;
+  soilPH: number | null;
   activities: { action: string; time: string }[];
 }
 
-const plots: PlotDetail[] = [
-  {
-    name: "Plot A",
-    variety: "Alphonso",
-    health: 92,
-    moisture: 68,
-    temp: "31°C",
-    size: "2.5 ha",
-    planted: "Mar 2022",
-    lastIrrigation: "Today, 06:30",
-    pestRisk: "Low",
-    ndvi: 0.82,
-    soilPH: 6.5,
-    activities: [
-      { action: "Irrigation completed", time: "Today, 06:30" },
-      { action: "Soil sample collected", time: "Mar 5" },
-      { action: "Pruning — lower branches", time: "Mar 2" },
-    ],
-  },
-  {
-    name: "Plot B",
-    variety: "Kent",
-    health: 78,
-    moisture: 45,
-    temp: "33°C",
-    size: "1.8 ha",
-    planted: "Jun 2021",
-    lastIrrigation: "Yesterday, 17:00",
-    pestRisk: "Medium",
-    ndvi: 0.71,
-    soilPH: 6.2,
-    activities: [
-      { action: "Organic spray applied", time: "Yesterday, 14:00" },
-      { action: "Fruit fly trap deployed", time: "Mar 4" },
-      { action: "Fertilizer — NPK organic", time: "Mar 1" },
-    ],
-  },
-  {
-    name: "Plot C",
-    variety: "Keitt",
-    health: 85,
-    moisture: 72,
-    temp: "30°C",
-    size: "3.2 ha",
-    planted: "Jan 2023",
-    lastIrrigation: "Today, 05:45",
-    pestRisk: "Low",
-    ndvi: 0.78,
-    soilPH: 6.8,
-    activities: [
-      { action: "Shade nets activated", time: "Today, 07:00" },
-      { action: "GPS boundary logged", time: "Mar 5" },
-      { action: "Mulching applied", time: "Mar 3" },
-    ],
-  },
-];
+const PLOT_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+function buildPlotsFromOnboarding(onboardingPlots: OnboardingPlot[], hasSoilKit: boolean): PlotDisplay[] {
+  if (onboardingPlots.length === 0) {
+    // Fallback if no plots were entered
+    return [{
+      name: "Plot A", variety: "Unknown", health: null, moisture: null,
+      temp: "—", size: "—", planted: "—", lastIrrigation: "—",
+      pestRisk: "Pending", ndvi: null, soilPH: null, activities: [],
+    }];
+  }
+
+  return onboardingPlots.map((p, i) => {
+    const letter = PLOT_LETTERS[i] || `${i + 1}`;
+    const planted = p.plantingDate
+      ? new Date(p.plantingDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+      : "—";
+
+    return {
+      name: `Plot ${letter}`,
+      variety: p.variety || "Unknown",
+      health: hasSoilKit ? Math.floor(70 + Math.random() * 25) : null,
+      moisture: hasSoilKit ? Math.floor(40 + Math.random() * 35) : null,
+      temp: "—",
+      size: p.size ? `${p.size} ha` : "—",
+      planted,
+      lastIrrigation: "No data yet",
+      pestRisk: hasSoilKit ? (["Low", "Medium"] as const)[Math.floor(Math.random() * 2)] : "Pending",
+      ndvi: hasSoilKit ? +(0.65 + Math.random() * 0.2).toFixed(2) : null,
+      soilPH: hasSoilKit ? +(6.0 + Math.random() * 1.0).toFixed(1) : null,
+      activities: [],
+    };
+  });
+}
 
 const riskColor: Record<string, string> = {
   Low: "bg-primary/10 text-primary",
   Medium: "bg-secondary/10 text-secondary",
   High: "bg-destructive/10 text-destructive",
+  Pending: "bg-muted text-muted-foreground",
 };
 
-const PlotsPage = () => {
+interface PlotsPageProps {
+  onboardingPlots: OnboardingPlot[];
+  hasSoilKit: boolean;
+}
+
+const PlotsPage = ({ onboardingPlots, hasSoilKit }: PlotsPageProps) => {
+  const plots = buildPlotsFromOnboarding(onboardingPlots, hasSoilKit);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [showAddPlot, setShowAddPlot] = useState(false);
+
+  const totalArea = onboardingPlots.reduce((sum, p) => sum + (parseFloat(p.size) || 0), 0);
 
   return (
     <div className="space-y-6">
@@ -102,8 +90,8 @@ const PlotsPage = () => {
 
       <div className="grid grid-cols-3 gap-3">
         <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-foreground">{plots.length}</p><p className="text-xs text-muted-foreground">Active Plots</p></CardContent></Card>
-        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-primary">7.5 ha</p><p className="text-xs text-muted-foreground">Total Area</p></CardContent></Card>
-        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-foreground">85%</p><p className="text-xs text-muted-foreground">Avg Health</p></CardContent></Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-primary">{totalArea > 0 ? `${totalArea} ha` : "—"}</p><p className="text-xs text-muted-foreground">Total Area</p></CardContent></Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-foreground">{hasSoilKit ? `${Math.round(plots.reduce((s, p) => s + (p.health || 0), 0) / plots.length)}%` : "—"}</p><p className="text-xs text-muted-foreground">Avg Health</p></CardContent></Card>
       </div>
 
       {plots.map((p) => (
@@ -115,71 +103,84 @@ const PlotsPage = () => {
                 {p.name} — {p.variety}
               </CardTitle>
               <Badge variant="outline" className={`text-xs ${riskColor[p.pestRisk]}`}>
-                {p.pestRisk === "Low" ? "🟢" : p.pestRisk === "Medium" ? "🟡" : "🔴"} {p.pestRisk} Risk
+                {p.pestRisk === "Pending" ? "⏳" : p.pestRisk === "Low" ? "🟢" : p.pestRisk === "Medium" ? "🟡" : "🔴"} {p.pestRisk === "Pending" ? "Awaiting data" : `${p.pestRisk} Risk`}
               </Badge>
             </div>
             <p className="text-xs text-muted-foreground">{p.size} · Planted {p.planted}</p>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="text-muted-foreground flex items-center gap-1"><Activity size={12} /> Health</span>
-                  <span className="font-medium text-foreground">{p.health}%</span>
-                </div>
-                <Progress value={p.health} className="h-2" />
-              </div>
-              <div>
-                <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="text-muted-foreground flex items-center gap-1"><Droplets size={12} /> Moisture</span>
-                  <span className="font-medium text-foreground">{p.moisture}%</span>
-                </div>
-                <Progress value={p.moisture} className="h-2" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-4 gap-2">
-              <div className="text-center p-2 rounded-md bg-muted/50">
-                <Thermometer size={14} className="mx-auto mb-1 text-muted-foreground" />
-                <p className="text-xs font-semibold text-foreground">{p.temp}</p>
-                <p className="text-[10px] text-muted-foreground">Temp</p>
-              </div>
-              <div className="text-center p-2 rounded-md bg-muted/50">
-                <Sun size={14} className="mx-auto mb-1 text-muted-foreground" />
-                <p className="text-xs font-semibold text-foreground">{p.ndvi}</p>
-                <p className="text-[10px] text-muted-foreground">NDVI</p>
-              </div>
-              <div className="text-center p-2 rounded-md bg-muted/50">
-                <Wind size={14} className="mx-auto mb-1 text-muted-foreground" />
-                <p className="text-xs font-semibold text-foreground">{p.soilPH}</p>
-                <p className="text-[10px] text-muted-foreground">Soil pH</p>
-              </div>
-              <div className="text-center p-2 rounded-md bg-muted/50">
-                <Bug size={14} className="mx-auto mb-1 text-muted-foreground" />
-                <p className="text-xs font-semibold text-foreground">{p.pestRisk}</p>
-                <p className="text-[10px] text-muted-foreground">Pest Risk</p>
-              </div>
-            </div>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full text-xs"
-              onClick={() => setExpanded(expanded === p.name ? null : p.name)}
-            >
-              {expanded === p.name ? "Hide Activity" : "View Recent Activity"}
-            </Button>
-
-            {expanded === p.name && (
-              <div className="space-y-2 pt-2 border-t border-border">
-                <p className="text-xs font-semibold text-muted-foreground">Recent Activity</p>
-                {p.activities.map((act, i) => (
-                  <div key={i} className="flex items-center justify-between text-xs">
-                    <span className="text-foreground">{act.action}</span>
-                    <span className="text-muted-foreground">{act.time}</span>
+            {hasSoilKit ? (
+              <>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <span className="text-muted-foreground flex items-center gap-1"><Activity size={12} /> Health</span>
+                      <span className="font-medium text-foreground">{p.health}%</span>
+                    </div>
+                    <Progress value={p.health ?? 0} className="h-2" />
                   </div>
-                ))}
+                  <div>
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <span className="text-muted-foreground flex items-center gap-1"><Droplets size={12} /> Moisture</span>
+                      <span className="font-medium text-foreground">{p.moisture}%</span>
+                    </div>
+                    <Progress value={p.moisture ?? 0} className="h-2" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  <div className="text-center p-2 rounded-md bg-muted/50">
+                    <Thermometer size={14} className="mx-auto mb-1 text-muted-foreground" />
+                    <p className="text-xs font-semibold text-foreground">{p.temp}</p>
+                    <p className="text-[10px] text-muted-foreground">Temp</p>
+                  </div>
+                  <div className="text-center p-2 rounded-md bg-muted/50">
+                    <Sun size={14} className="mx-auto mb-1 text-muted-foreground" />
+                    <p className="text-xs font-semibold text-foreground">{p.ndvi}</p>
+                    <p className="text-[10px] text-muted-foreground">NDVI</p>
+                  </div>
+                  <div className="text-center p-2 rounded-md bg-muted/50">
+                    <Wind size={14} className="mx-auto mb-1 text-muted-foreground" />
+                    <p className="text-xs font-semibold text-foreground">{p.soilPH}</p>
+                    <p className="text-[10px] text-muted-foreground">Soil pH</p>
+                  </div>
+                  <div className="text-center p-2 rounded-md bg-muted/50">
+                    <Bug size={14} className="mx-auto mb-1 text-muted-foreground" />
+                    <p className="text-xs font-semibold text-foreground">{p.pestRisk}</p>
+                    <p className="text-[10px] text-muted-foreground">Pest Risk</p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 border border-dashed border-border">
+                <FlaskConical size={16} className="text-muted-foreground shrink-0" />
+                <p className="text-xs text-muted-foreground">
+                  Soil health, moisture, pH, and NDVI data will appear once your soil kit results are processed.
+                </p>
               </div>
+            )}
+
+            {p.activities.length > 0 && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full text-xs"
+                  onClick={() => setExpanded(expanded === p.name ? null : p.name)}
+                >
+                  {expanded === p.name ? "Hide Activity" : "View Recent Activity"}
+                </Button>
+                {expanded === p.name && (
+                  <div className="space-y-2 pt-2 border-t border-border">
+                    <p className="text-xs font-semibold text-muted-foreground">Recent Activity</p>
+                    {p.activities.map((act, i) => (
+                      <div key={i} className="flex items-center justify-between text-xs">
+                        <span className="text-foreground">{act.action}</span>
+                        <span className="text-muted-foreground">{act.time}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </CardContent>
         </Card>

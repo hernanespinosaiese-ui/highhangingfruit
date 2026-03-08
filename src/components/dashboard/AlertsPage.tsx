@@ -6,18 +6,30 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Bell, CheckCircle, Clock, AlertTriangle, Droplets, Bug, Thermometer } from "lucide-react";
 import ActionDialog from "./ActionDialog";
 
-const alerts = [
+interface Alert {
+  id: number;
+  type: string;
+  icon: typeof Droplets;
+  title: string;
+  description: string;
+  severity: "High" | "Medium" | "Low";
+  confidence: string;
+  action: string;
+  time: string;
+  resolved: boolean;
+  dialogContent: {
+    title: string;
+    description: string;
+    details: { label: string; value: string }[];
+  };
+}
+
+const initialAlerts: Alert[] = [
   {
-    id: 1,
-    type: "Irrigation",
-    icon: Droplets,
+    id: 1, type: "Irrigation", icon: Droplets,
     title: "Plot A needs irrigation in 4 hours",
     description: "Soil moisture has dropped to 32% — below the 40% threshold for Alphonso mangoes. Forecast shows no rain for 48 hours. Recommend scheduling drip irrigation for early morning.",
-    severity: "High" as const,
-    confidence: "94%",
-    action: "Schedule irrigation",
-    time: "2 hours ago",
-    resolved: false,
+    severity: "High", confidence: "94%", action: "Schedule irrigation", time: "2 hours ago", resolved: false,
     dialogContent: {
       title: "Schedule Irrigation — Plot A",
       description: "Drip irrigation will be scheduled for tomorrow at 05:30 AM. Estimated duration: 45 minutes. Soil moisture target: 60%.",
@@ -31,16 +43,10 @@ const alerts = [
     },
   },
   {
-    id: 2,
-    type: "Pest",
-    icon: Bug,
+    id: 2, type: "Pest", icon: Bug,
     title: "Fruit fly activity detected near Plot B",
     description: "Climate pattern analysis shows 87% probability of Bactrocera dorsalis activity based on temperature (33°C) and humidity (68%). Neem-based traps recommended as organic-compliant solution.",
-    severity: "Medium" as const,
-    confidence: "87%",
-    action: "Deploy traps",
-    time: "5 hours ago",
-    resolved: false,
+    severity: "Medium", confidence: "87%", action: "Deploy traps", time: "5 hours ago", resolved: false,
     dialogContent: {
       title: "Deploy Neem-Based Traps — Plot B",
       description: "Organic-compliant fruit fly traps will be deployed at 6 strategic locations around Plot B perimeter.",
@@ -53,16 +59,10 @@ const alerts = [
     },
   },
   {
-    id: 3,
-    type: "Weather",
-    icon: Thermometer,
+    id: 3, type: "Weather", icon: Thermometer,
     title: "Heatwave expected — 38°C for 3 days",
     description: "Extended heat forecast for your region. UV index expected to reach 10+. Shade nets on Plot C and increased irrigation frequency recommended to prevent sunburn damage on fruit.",
-    severity: "High" as const,
-    confidence: "91%",
-    action: "Activate shade nets",
-    time: "Today, 06:00",
-    resolved: false,
+    severity: "High", confidence: "91%", action: "Activate shade nets", time: "Today, 06:00", resolved: false,
     dialogContent: {
       title: "Activate Shade Nets — Plot C",
       description: "Automated shade nets will be deployed to protect fruit from sun damage during the forecasted heatwave.",
@@ -75,16 +75,10 @@ const alerts = [
     },
   },
   {
-    id: 4,
-    type: "Irrigation",
-    icon: Droplets,
+    id: 4, type: "Irrigation", icon: Droplets,
     title: "Plot C irrigation completed successfully",
     description: "Automated drip irrigation ran for 45 minutes. Soil moisture restored to 65%. GPS-stamped and verified for insurance log.",
-    severity: "Low" as const,
-    confidence: "100%",
-    action: "View log",
-    time: "Yesterday",
-    resolved: true,
+    severity: "Low", confidence: "100%", action: "View log", time: "Yesterday", resolved: true,
     dialogContent: {
       title: "Irrigation Log — Plot C",
       description: "Completed irrigation session details and verification status.",
@@ -98,16 +92,10 @@ const alerts = [
     },
   },
   {
-    id: 5,
-    type: "Pest",
-    icon: Bug,
+    id: 5, type: "Pest", icon: Bug,
     title: "Organic spray applied — Plot B cleared",
     description: "Neem-based treatment applied successfully. Follow-up scan in 72 hours recommended. Action verified and logged.",
-    severity: "Low" as const,
-    confidence: "100%",
-    action: "Schedule follow-up",
-    time: "2 days ago",
-    resolved: true,
+    severity: "Low", confidence: "100%", action: "Schedule follow-up", time: "2 days ago", resolved: true,
     dialogContent: {
       title: "Schedule Follow-Up Scan — Plot B",
       description: "A follow-up pest scan will be scheduled to verify treatment effectiveness.",
@@ -128,7 +116,8 @@ const severityColor: Record<string, string> = {
 
 const AlertsPage = () => {
   const [tab, setTab] = useState("All");
-  const [dialogAlert, setDialogAlert] = useState<typeof alerts[0] | null>(null);
+  const [alerts, setAlerts] = useState<Alert[]>(initialAlerts);
+  const [dialogAlert, setDialogAlert] = useState<Alert | null>(null);
 
   const activeAlerts = alerts.filter((a) => !a.resolved);
   const resolvedAlerts = alerts.filter((a) => a.resolved);
@@ -136,7 +125,17 @@ const AlertsPage = () => {
   const filteredActive = filtered.filter((a) => !a.resolved);
   const filteredResolved = filtered.filter((a) => a.resolved);
 
-  const renderAlertCard = (a: typeof alerts[0], isResolved: boolean) => (
+  const handleResolveAlert = (id: number) => {
+    setAlerts((prev) =>
+      prev.map((a) =>
+        a.id === id
+          ? { ...a, resolved: true, severity: "Low" as const, time: "Just now", action: "View log" }
+          : a
+      )
+    );
+  };
+
+  const renderAlertCard = (a: Alert, isResolved: boolean) => (
     <Card key={a.id} className={isResolved ? "opacity-75" : "border-l-4"} style={!isResolved ? { borderLeftColor: a.severity === "High" ? "hsl(var(--destructive))" : "hsl(var(--secondary))" } : undefined}>
       <CardContent className="p-4 space-y-3">
         <div className="flex items-start justify-between gap-2">
@@ -222,6 +221,11 @@ const AlertsPage = () => {
           description={dialogAlert.dialogContent.description}
           confirmLabel={dialogAlert.resolved ? "Done" : dialogAlert.action}
           variant={dialogAlert.resolved ? "view" : "action"}
+          onConfirm={() => {
+            if (!dialogAlert.resolved) {
+              handleResolveAlert(dialogAlert.id);
+            }
+          }}
         >
           <div className="space-y-2">
             {dialogAlert.dialogContent.details.map((d) => (

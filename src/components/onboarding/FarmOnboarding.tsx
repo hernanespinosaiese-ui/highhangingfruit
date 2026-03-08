@@ -6,26 +6,20 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import type { FarmOnboardingData, OnboardingPlot } from "@/pages/Platform";
 
 const REGIONS = ["Axarquía (Málaga)", "Costa Tropical (Granada)", "Valle del Guadalhorce", "Huelva", "Cádiz", "Almería"];
 const VARIETIES = ["Alphonso", "Kent", "Tommy Atkins", "Keitt", "Haden", "Ataulfo", "Kesar"];
 
-interface Plot {
-  id: string;
-  variety: string;
-  plantingDate: string;
-  size: string;
-}
-
 interface FarmOnboardingProps {
-  onComplete: (data: { farmName: string; region: string }) => void;
+  onComplete: (data: FarmOnboardingData) => void;
 }
 
 const FarmOnboarding = ({ onComplete }: FarmOnboardingProps) => {
   const [farmName, setFarmName] = useState("");
   const [farmSize, setFarmSize] = useState("");
   const [region, setRegion] = useState("");
-  const [plots, setPlots] = useState<Plot[]>([
+  const [plots, setPlots] = useState<OnboardingPlot[]>([
     { id: "1", variety: "", plantingDate: "", size: "" },
   ]);
   const [notifications, setNotifications] = useState({
@@ -42,7 +36,7 @@ const FarmOnboarding = ({ onComplete }: FarmOnboardingProps) => {
     if (plots.length > 1) setPlots(plots.filter((p) => p.id !== id));
   };
 
-  const updatePlot = (id: string, field: keyof Plot, value: string) => {
+  const updatePlot = (id: string, field: keyof OnboardingPlot, value: string) => {
     setPlots(plots.map((p) => (p.id === id ? { ...p, [field]: value } : p)));
   };
 
@@ -132,7 +126,15 @@ const FarmOnboarding = ({ onComplete }: FarmOnboardingProps) => {
             <Button
               className="w-full gap-2"
               size="lg"
-              onClick={() => onComplete({ farmName: farmName || "My Farm", region: region || "South Asia" })}
+              onClick={() =>
+                onComplete({
+                  farmName: farmName || "My Farm",
+                  region: region || "South Asia",
+                  farmSize,
+                  plots: plots.filter((p) => p.variety),
+                  hasSoilKit: false,
+                })
+              }
             >
               <Rocket size={18} /> Launch My Farm Dashboard
             </Button>
