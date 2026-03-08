@@ -102,7 +102,7 @@ const FarmOnboarding = ({ onComplete }: FarmOnboardingProps) => {
                   </Select>
                   <div className="grid grid-cols-2 gap-3">
                     <Input type="date" value={plot.plantingDate} onChange={(e) => updatePlot(plot.id, "plantingDate", e.target.value)} />
-                    <Input placeholder="Size (acres)" type="number" value={plot.size} onChange={(e) => updatePlot(plot.id, "size", e.target.value)} />
+                    <Input placeholder="Size (hectares)" type="number" value={plot.size} onChange={(e) => updatePlot(plot.id, "size", e.target.value)} />
                   </div>
                 </div>
               ))}
