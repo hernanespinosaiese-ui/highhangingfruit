@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const REGIONS = ["South Asia", "West Africa", "East Africa", "Central America", "Southeast Asia", "Australia"];
+const REGIONS = ["Axarquía (Málaga)", "Costa Tropical (Granada)", "Valle del Guadalhorce", "Huelva", "Cádiz", "Almería"];
 const VARIETIES = ["Alphonso", "Kent", "Tommy Atkins", "Keitt", "Haden", "Ataulfo", "Kesar"];
 
 interface Plot {
@@ -63,7 +63,7 @@ const FarmOnboarding = ({ onComplete }: FarmOnboardingProps) => {
             <div className="space-y-4">
               <h3 className="font-semibold text-foreground flex items-center gap-2">🌍 Farm Details</h3>
               <Input placeholder="Farm name" value={farmName} onChange={(e) => setFarmName(e.target.value)} />
-              <Input placeholder="Size (acres)" type="number" value={farmSize} onChange={(e) => setFarmSize(e.target.value)} />
+              <Input placeholder="Size (hectares)" type="number" value={farmSize} onChange={(e) => setFarmSize(e.target.value)} />
               <Select value={region} onValueChange={setRegion}>
                 <SelectTrigger><SelectValue placeholder="Select region" /></SelectTrigger>
                 <SelectContent>
@@ -102,7 +102,7 @@ const FarmOnboarding = ({ onComplete }: FarmOnboardingProps) => {
                   </Select>
                   <div className="grid grid-cols-2 gap-3">
                     <Input type="date" value={plot.plantingDate} onChange={(e) => updatePlot(plot.id, "plantingDate", e.target.value)} />
-                    <Input placeholder="Size (acres)" type="number" value={plot.size} onChange={(e) => updatePlot(plot.id, "size", e.target.value)} />
+                    <Input placeholder="Size (hectares)" type="number" value={plot.size} onChange={(e) => updatePlot(plot.id, "size", e.target.value)} />
                   </div>
                 </div>
               ))}
