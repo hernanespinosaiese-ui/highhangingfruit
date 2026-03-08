@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const REGIONS = ["South Asia", "West Africa", "East Africa", "Central America", "Southeast Asia", "Australia"];
+const REGIONS = ["Axarquía (Málaga)", "Costa Tropical (Granada)", "Valle del Guadalhorce", "Huelva", "Cádiz", "Almería"];
 const VARIETIES = ["Alphonso", "Kent", "Tommy Atkins", "Keitt", "Haden", "Ataulfo", "Kesar"];
 
 interface Plot {
