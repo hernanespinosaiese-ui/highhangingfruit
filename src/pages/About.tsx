@@ -13,9 +13,11 @@ const fadeUp = {
 };
 
 const team = [
-  { name: "Coming Soon", role: "Founder & CEO", placeholder: true },
-  { name: "Coming Soon", role: "Head of Agronomy", placeholder: true },
-  { name: "Coming Soon", role: "Data Scientist", placeholder: true },
+  { name: "Hernán Espinosa", role: "Founder & CEO" },
+  { name: "Ngoc Nguyen", role: "Head of Sales & Marketing" },
+  { name: "María Peguero", role: "Head of External Relations" },
+  { name: "Yan Chen", role: "Head of Engineering" },
+  { name: "Mauricio Acuña", role: "Head of Finance" },
 ];
 
 const About = () => {
