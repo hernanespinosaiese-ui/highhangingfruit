@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
 import { Bell, CheckCircle, Clock, AlertTriangle, Droplets, Bug, Thermometer } from "lucide-react";
+import ActionDialog from "./ActionDialog";
 
 const alerts = [
   {
@@ -18,6 +18,17 @@ const alerts = [
     action: "Schedule irrigation",
     time: "2 hours ago",
     resolved: false,
+    dialogContent: {
+      title: "Schedule Irrigation — Plot A",
+      description: "Drip irrigation will be scheduled for tomorrow at 05:30 AM. Estimated duration: 45 minutes. Soil moisture target: 60%.",
+      details: [
+        { label: "Plot", value: "Plot A — Alphonso" },
+        { label: "Current Moisture", value: "32%" },
+        { label: "Target Moisture", value: "60%" },
+        { label: "Scheduled Time", value: "Tomorrow, 05:30 AM" },
+        { label: "Duration", value: "~45 minutes" },
+      ],
+    },
   },
   {
     id: 2,
@@ -30,6 +41,16 @@ const alerts = [
     action: "Deploy traps",
     time: "5 hours ago",
     resolved: false,
+    dialogContent: {
+      title: "Deploy Neem-Based Traps — Plot B",
+      description: "Organic-compliant fruit fly traps will be deployed at 6 strategic locations around Plot B perimeter.",
+      details: [
+        { label: "Trap Type", value: "Neem-based pheromone traps" },
+        { label: "Quantity", value: "6 units" },
+        { label: "Coverage", value: "Plot B full perimeter" },
+        { label: "Follow-up", value: "Auto-scheduled in 72 hours" },
+      ],
+    },
   },
   {
     id: 3,
@@ -42,6 +63,16 @@ const alerts = [
     action: "Activate shade nets",
     time: "Today, 06:00",
     resolved: false,
+    dialogContent: {
+      title: "Activate Shade Nets — Plot C",
+      description: "Automated shade nets will be deployed to protect fruit from sun damage during the forecasted heatwave.",
+      details: [
+        { label: "Coverage", value: "Plot C — 3.2 ha" },
+        { label: "UV Protection", value: "70% reduction" },
+        { label: "Duration", value: "3 days (auto-retract)" },
+        { label: "Irrigation Boost", value: "+20% frequency" },
+      ],
+    },
   },
   {
     id: 4,
@@ -54,6 +85,17 @@ const alerts = [
     action: "View log",
     time: "Yesterday",
     resolved: true,
+    dialogContent: {
+      title: "Irrigation Log — Plot C",
+      description: "Completed irrigation session details and verification status.",
+      details: [
+        { label: "Duration", value: "45 minutes" },
+        { label: "Moisture Before", value: "38%" },
+        { label: "Moisture After", value: "65%" },
+        { label: "GPS Verified", value: "Yes ✓" },
+        { label: "Insurance Logged", value: "Yes ✓" },
+      ],
+    },
   },
   {
     id: 5,
@@ -66,6 +108,15 @@ const alerts = [
     action: "Schedule follow-up",
     time: "2 days ago",
     resolved: true,
+    dialogContent: {
+      title: "Schedule Follow-Up Scan — Plot B",
+      description: "A follow-up pest scan will be scheduled to verify treatment effectiveness.",
+      details: [
+        { label: "Scan Type", value: "Visual + pheromone trap check" },
+        { label: "Scheduled", value: "In 72 hours" },
+        { label: "Plot", value: "Plot B — Kent" },
+      ],
+    },
   },
 ];
 
@@ -77,15 +128,50 @@ const severityColor: Record<string, string> = {
 
 const AlertsPage = () => {
   const [tab, setTab] = useState("All");
+  const [dialogAlert, setDialogAlert] = useState<typeof alerts[0] | null>(null);
+
   const activeAlerts = alerts.filter((a) => !a.resolved);
   const resolvedAlerts = alerts.filter((a) => a.resolved);
   const filtered = tab === "All" ? alerts : alerts.filter((a) => a.type === tab);
   const filteredActive = filtered.filter((a) => !a.resolved);
   const filteredResolved = filtered.filter((a) => a.resolved);
 
+  const renderAlertCard = (a: typeof alerts[0], isResolved: boolean) => (
+    <Card key={a.id} className={isResolved ? "opacity-75" : "border-l-4"} style={!isResolved ? { borderLeftColor: a.severity === "High" ? "hsl(var(--destructive))" : "hsl(var(--secondary))" } : undefined}>
+      <CardContent className="p-4 space-y-3">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 p-1.5 rounded-md bg-muted">
+              {isResolved ? <CheckCircle size={16} className="text-primary" /> : <a.icon size={16} className="text-muted-foreground" />}
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-foreground">{a.title}</p>
+              <p className="text-xs text-muted-foreground">{a.description}</p>
+            </div>
+          </div>
+          {!isResolved && (
+            <Badge variant="outline" className={`text-xs shrink-0 ${severityColor[a.severity]}`}>
+              {a.severity}
+            </Badge>
+          )}
+        </div>
+        <div className="flex items-center justify-between pt-1">
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <Clock size={12} /> {a.time}
+            </span>
+            <span className="text-xs text-muted-foreground">Confidence: {a.confidence}</span>
+          </div>
+          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setDialogAlert(a)}>
+            {a.action}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="space-y-1">
         <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
           <Bell size={20} className="text-secondary" /> Smart Alerts
@@ -93,29 +179,12 @@ const AlertsPage = () => {
         <p className="text-sm text-muted-foreground">AI-powered recommendations with full reasoning</p>
       </div>
 
-      {/* Summary Stats */}
       <div className="grid grid-cols-3 gap-3">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-destructive">{activeAlerts.length}</p>
-            <p className="text-xs text-muted-foreground">Active</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-primary">{resolvedAlerts.length}</p>
-            <p className="text-xs text-muted-foreground">Resolved</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-foreground">91%</p>
-            <p className="text-xs text-muted-foreground">Avg Confidence</p>
-          </CardContent>
-        </Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-destructive">{activeAlerts.length}</p><p className="text-xs text-muted-foreground">Active</p></CardContent></Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-primary">{resolvedAlerts.length}</p><p className="text-xs text-muted-foreground">Resolved</p></CardContent></Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-foreground">91%</p><p className="text-xs text-muted-foreground">Avg Confidence</p></CardContent></Card>
       </div>
 
-      {/* Filter Tabs */}
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="w-full justify-start h-auto flex-wrap gap-1 p-1">
           {["All", "Irrigation", "Pest", "Weather"].map((t) => (
@@ -126,68 +195,44 @@ const AlertsPage = () => {
         </TabsList>
 
         <TabsContent value={tab} className="mt-4 space-y-6">
-          {/* Active Alerts */}
           {filteredActive.length > 0 && (
             <div className="space-y-3">
               <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <AlertTriangle size={14} className="text-secondary" /> Active Alerts
               </h3>
-              {filteredActive.map((a) => (
-                <Card key={a.id} className="border-l-4" style={{ borderLeftColor: a.severity === "High" ? "hsl(var(--destructive))" : "hsl(var(--secondary))" }}>
-                  <CardContent className="p-4 space-y-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-start gap-3">
-                        <div className="mt-0.5 p-1.5 rounded-md bg-muted">
-                          <a.icon size={16} className="text-muted-foreground" />
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-foreground">{a.title}</p>
-                          <p className="text-xs text-muted-foreground">{a.description}</p>
-                        </div>
-                      </div>
-                      <Badge variant="outline" className={`text-xs shrink-0 ${severityColor[a.severity]}`}>
-                        {a.severity}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between pt-1">
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Clock size={12} /> {a.time}
-                        </span>
-                        <span className="text-xs text-muted-foreground">Confidence: {a.confidence}</span>
-                      </div>
-                      <Button size="sm" variant="outline" className="h-7 text-xs">{a.action}</Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {filteredActive.map((a) => renderAlertCard(a, false))}
             </div>
           )}
-
-          {/* Resolved */}
           {filteredResolved.length > 0 && (
             <div className="space-y-3">
               <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <CheckCircle size={14} className="text-primary" /> Resolved Today
               </h3>
-              {filteredResolved.map((a) => (
-                <Card key={a.id} className="opacity-75">
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-3">
-                      <CheckCircle size={16} className="text-primary mt-0.5 shrink-0" />
-                      <div className="space-y-1 flex-1">
-                        <p className="text-sm font-medium text-foreground">{a.title}</p>
-                        <p className="text-xs text-muted-foreground">{a.description}</p>
-                        <span className="text-xs text-muted-foreground">{a.time}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {filteredResolved.map((a) => renderAlertCard(a, true))}
             </div>
           )}
         </TabsContent>
       </Tabs>
+
+      {dialogAlert && (
+        <ActionDialog
+          open={!!dialogAlert}
+          onOpenChange={(open) => !open && setDialogAlert(null)}
+          title={dialogAlert.dialogContent.title}
+          description={dialogAlert.dialogContent.description}
+          confirmLabel={dialogAlert.resolved ? "Done" : dialogAlert.action}
+          variant={dialogAlert.resolved ? "view" : "action"}
+        >
+          <div className="space-y-2">
+            {dialogAlert.dialogContent.details.map((d) => (
+              <div key={d.label} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                <span className="text-sm text-muted-foreground">{d.label}</span>
+                <span className="text-sm font-medium text-foreground">{d.value}</span>
+              </div>
+            ))}
+          </div>
+        </ActionDialog>
+      )}
     </div>
   );
 };

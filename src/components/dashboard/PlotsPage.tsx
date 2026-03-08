@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Plus, MapPin, Thermometer, Droplets, Activity, Sun, Wind, Bug } from "lucide-react";
+import ActionDialog from "./ActionDialog";
 
 interface PlotDetail {
   name: string;
@@ -85,43 +86,26 @@ const riskColor: Record<string, string> = {
 
 const PlotsPage = () => {
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [showAddPlot, setShowAddPlot] = useState(false);
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h2 className="text-xl font-bold text-foreground">🌳 My Plots</h2>
           <p className="text-sm text-muted-foreground">Real-time soil, temperature & health monitoring</p>
         </div>
-        <Button variant="outline" size="sm" className="gap-1">
+        <Button variant="outline" size="sm" className="gap-1" onClick={() => setShowAddPlot(true)}>
           <Plus size={14} /> Add New Plot
         </Button>
       </div>
 
-      {/* Summary */}
       <div className="grid grid-cols-3 gap-3">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-foreground">{plots.length}</p>
-            <p className="text-xs text-muted-foreground">Active Plots</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-primary">7.5 ha</p>
-            <p className="text-xs text-muted-foreground">Total Area</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-foreground">85%</p>
-            <p className="text-xs text-muted-foreground">Avg Health</p>
-          </CardContent>
-        </Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-foreground">{plots.length}</p><p className="text-xs text-muted-foreground">Active Plots</p></CardContent></Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-primary">7.5 ha</p><p className="text-xs text-muted-foreground">Total Area</p></CardContent></Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-foreground">85%</p><p className="text-xs text-muted-foreground">Avg Health</p></CardContent></Card>
       </div>
 
-      {/* Plot Cards */}
       {plots.map((p) => (
         <Card key={p.name} className="overflow-hidden">
           <CardHeader className="pb-3">
@@ -137,29 +121,23 @@ const PlotsPage = () => {
             <p className="text-xs text-muted-foreground">{p.size} · Planted {p.planted}</p>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Key metrics */}
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <Activity size={12} /> Health
-                  </span>
+                  <span className="text-muted-foreground flex items-center gap-1"><Activity size={12} /> Health</span>
                   <span className="font-medium text-foreground">{p.health}%</span>
                 </div>
                 <Progress value={p.health} className="h-2" />
               </div>
               <div>
                 <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <Droplets size={12} /> Moisture
-                  </span>
+                  <span className="text-muted-foreground flex items-center gap-1"><Droplets size={12} /> Moisture</span>
                   <span className="font-medium text-foreground">{p.moisture}%</span>
                 </div>
                 <Progress value={p.moisture} className="h-2" />
               </div>
             </div>
 
-            {/* Stats row */}
             <div className="grid grid-cols-4 gap-2">
               <div className="text-center p-2 rounded-md bg-muted/50">
                 <Thermometer size={14} className="mx-auto mb-1 text-muted-foreground" />
@@ -183,7 +161,6 @@ const PlotsPage = () => {
               </div>
             </div>
 
-            {/* Expand for activity */}
             <Button
               variant="ghost"
               size="sm"
@@ -207,6 +184,36 @@ const PlotsPage = () => {
           </CardContent>
         </Card>
       ))}
+
+      <ActionDialog
+        open={showAddPlot}
+        onOpenChange={setShowAddPlot}
+        title="Add New Plot"
+        description="Register a new plot to start monitoring soil, weather, and crop health."
+        confirmLabel="Add Plot"
+        variant="action"
+      >
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Plot Name</label>
+            <input className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="e.g. Plot D" />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Variety</label>
+            <input className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="e.g. Alphonso, Kent, Keitt" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Size (hectares)</label>
+              <input className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="e.g. 2.5" type="number" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Planted Date</label>
+              <input className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="e.g. Jan 2023" />
+            </div>
+          </div>
+        </div>
+      </ActionDialog>
     </div>
   );
 };

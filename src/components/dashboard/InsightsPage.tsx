@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Brain, Leaf, Droplets, Bug, TrendingUp, Camera, Upload } from "lucide-react";
+import ActionDialog from "./ActionDialog";
 
 interface Insight {
   id: number;
@@ -14,6 +15,10 @@ interface Insight {
   confidence: string;
   source: string;
   actionLabel: string;
+  dialogTitle: string;
+  dialogDescription: string;
+  dialogDetails: { label: string; value: string }[];
+  dialogVariant: "action" | "view";
 }
 
 const insights: Insight[] = [
@@ -26,6 +31,18 @@ const insights: Insight[] = [
     confidence: "92%",
     source: "Climate + Pest Model v3.2",
     actionLabel: "View treatment plan",
+    dialogTitle: "Neem-Based Treatment Plan",
+    dialogDescription: "Recommended organic pest control switch for improved effectiveness in your climate zone.",
+    dialogDetails: [
+      { label: "Current Treatment", value: "Pyrethrin spray (declining)" },
+      { label: "Recommended", value: "Cold-pressed neem oil 2% solution" },
+      { label: "Application", value: "Foliar spray every 10 days" },
+      { label: "Coverage", value: "All plots — focus on Plot B" },
+      { label: "Effectiveness", value: "+23% vs current treatment" },
+      { label: "Organic Certified", value: "Yes ✓ (EU & USDA)" },
+      { label: "Cost Estimate", value: "€18/hectare per application" },
+    ],
+    dialogVariant: "view",
   },
   {
     id: 2,
@@ -36,6 +53,16 @@ const insights: Insight[] = [
     confidence: "89%",
     source: "Maturity Model + Weather API",
     actionLabel: "Set harvest reminder",
+    dialogTitle: "Set Harvest Reminder",
+    dialogDescription: "A reminder will be set for the optimal harvest window based on maturity predictions.",
+    dialogDetails: [
+      { label: "Optimal Window", value: "March 12–18" },
+      { label: "Peak Brix Date", value: "March 15 (18° predicted)" },
+      { label: "Reminder Set For", value: "March 11, 07:00 AM" },
+      { label: "Plots Affected", value: "Plot A (Alphonso)" },
+      { label: "Weather Outlook", value: "Clear skies, 28–31°C" },
+    ],
+    dialogVariant: "action",
   },
   {
     id: 3,
@@ -46,6 +73,17 @@ const insights: Insight[] = [
     confidence: "95%",
     source: "Soil Sensor + Weather Data",
     actionLabel: "Adjust schedule",
+    dialogTitle: "Adjust Irrigation Schedule — Plot C",
+    dialogDescription: "Reduce irrigation frequency to bring soil moisture closer to optimal levels.",
+    dialogDetails: [
+      { label: "Current Moisture", value: "72%" },
+      { label: "Target Moisture", value: "60%" },
+      { label: "Reduction", value: "15% (from 45 min to 38 min)" },
+      { label: "Strategy", value: "Deficit irrigation — 2 weeks" },
+      { label: "Root Rot Risk Reduction", value: "-30%" },
+      { label: "Water Savings", value: "~1,200L/week" },
+    ],
+    dialogVariant: "action",
   },
   {
     id: 4,
@@ -56,6 +94,17 @@ const insights: Insight[] = [
     confidence: "87%",
     source: "Growth Stage + Soil Analysis",
     actionLabel: "View fertilizer options",
+    dialogTitle: "Organic Fertilizer Options",
+    dialogDescription: "Recommended potassium-rich organic fertilizers for the flowering stage.",
+    dialogDetails: [
+      { label: "Option 1", value: "Kelp extract (4-1-8 NPK) — €22/L" },
+      { label: "Option 2", value: "Seaweed foliar spray — €15/L" },
+      { label: "Option 3", value: "Wood ash compost — €8/bag" },
+      { label: "Recommended", value: "Kelp extract (highest K content)" },
+      { label: "Application Rate", value: "5ml/L, bi-weekly foliar spray" },
+      { label: "Expected Improvement", value: "+18% fruit set" },
+    ],
+    dialogVariant: "view",
   },
   {
     id: 5,
@@ -66,6 +115,17 @@ const insights: Insight[] = [
     confidence: "78%",
     source: "Market Intelligence Feed",
     actionLabel: "Explore buyers",
+    dialogTitle: "EU Premium Buyer Directory",
+    dialogDescription: "Verified buyers seeking organic-certified mangoes with traceability documentation.",
+    dialogDetails: [
+      { label: "Buyer 1", value: "FreshOrganics GmbH (Germany) — €4.20/kg" },
+      { label: "Buyer 2", value: "BioFruit España (Spain) — €3.80/kg" },
+      { label: "Buyer 3", value: "NaturMarkt (Netherlands) — €4.50/kg" },
+      { label: "Your Certification", value: "EU Organic ✓ / GPS Traced ✓" },
+      { label: "Market Trend", value: "+34% YoY demand" },
+      { label: "Contract Window", value: "Open until March 30" },
+    ],
+    dialogVariant: "view",
   },
 ];
 
@@ -86,11 +146,11 @@ const impactColor: Record<string, string> = {
 const InsightsPage = () => {
   const [tab, setTab] = useState("All");
   const [dragOver, setDragOver] = useState(false);
+  const [dialogInsight, setDialogInsight] = useState<Insight | null>(null);
   const filtered = tab === "All" ? insights : insights.filter((i) => i.category === tab);
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="space-y-1">
         <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
           <Brain size={20} className="text-primary" /> AI Insights
@@ -98,29 +158,12 @@ const InsightsPage = () => {
         <p className="text-sm text-muted-foreground">Organic-first recommendations powered by climate data</p>
       </div>
 
-      {/* Summary */}
       <div className="grid grid-cols-3 gap-3">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-primary">{insights.length}</p>
-            <p className="text-xs text-muted-foreground">Active Insights</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-foreground">89%</p>
-            <p className="text-xs text-muted-foreground">Avg Confidence</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-primary">3</p>
-            <p className="text-xs text-muted-foreground">High Impact</p>
-          </CardContent>
-        </Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-primary">{insights.length}</p><p className="text-xs text-muted-foreground">Active Insights</p></CardContent></Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-foreground">89%</p><p className="text-xs text-muted-foreground">Avg Confidence</p></CardContent></Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-primary">3</p><p className="text-xs text-muted-foreground">High Impact</p></CardContent></Card>
       </div>
 
-      {/* Filter */}
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="w-full justify-start h-auto flex-wrap gap-1 p-1">
           {["All", "Pest", "Harvest", "Irrigation", "Nutrition", "Market"].map((t) => (
@@ -153,7 +196,9 @@ const InsightsPage = () => {
                       <span className="text-[10px] text-muted-foreground">Confidence: {ins.confidence}</span>
                       <span className="text-[10px] text-muted-foreground">Source: {ins.source}</span>
                     </div>
-                    <Button size="sm" variant="outline" className="h-7 text-xs">{ins.actionLabel}</Button>
+                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setDialogInsight(ins)}>
+                      {ins.actionLabel}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -162,7 +207,6 @@ const InsightsPage = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Pest Photo Scan — only on All & Pest */}
       {(tab === "All" || tab === "Pest") && (
         <Card>
           <CardHeader className="pb-3">
@@ -186,6 +230,26 @@ const InsightsPage = () => {
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {dialogInsight && (
+        <ActionDialog
+          open={!!dialogInsight}
+          onOpenChange={(open) => !open && setDialogInsight(null)}
+          title={dialogInsight.dialogTitle}
+          description={dialogInsight.dialogDescription}
+          confirmLabel={dialogInsight.actionLabel}
+          variant={dialogInsight.dialogVariant}
+        >
+          <div className="space-y-2">
+            {dialogInsight.dialogDetails.map((d) => (
+              <div key={d.label} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                <span className="text-sm text-muted-foreground">{d.label}</span>
+                <span className="text-sm font-medium text-foreground text-right max-w-[60%]">{d.value}</span>
+              </div>
+            ))}
+          </div>
+        </ActionDialog>
       )}
     </div>
   );

@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import ActionDialog from "./ActionDialog";
 
 const alerts = [
   {
@@ -12,6 +13,14 @@ const alerts = [
     severity: "High",
     confidence: "94%",
     action: "Schedule irrigation",
+    dialogTitle: "Schedule Irrigation — Plot A",
+    dialogDesc: "Drip irrigation will run tomorrow at 05:30 AM for ~45 minutes.",
+    dialogDetails: [
+      { label: "Plot", value: "Plot A — Alphonso" },
+      { label: "Current Moisture", value: "32%" },
+      { label: "Target", value: "60%" },
+      { label: "Time", value: "Tomorrow, 05:30 AM" },
+    ],
   },
   {
     id: 2,
@@ -20,6 +29,13 @@ const alerts = [
     severity: "Medium",
     confidence: "87%",
     action: "Deploy traps",
+    dialogTitle: "Deploy Traps — Plot B",
+    dialogDesc: "Neem-based pheromone traps at 6 perimeter locations.",
+    dialogDetails: [
+      { label: "Trap Type", value: "Neem-based pheromone" },
+      { label: "Quantity", value: "6 units" },
+      { label: "Follow-up", value: "72 hours" },
+    ],
   },
   {
     id: 3,
@@ -28,6 +44,13 @@ const alerts = [
     severity: "High",
     confidence: "91%",
     action: "Activate shade nets",
+    dialogTitle: "Activate Shade Nets — Plot C",
+    dialogDesc: "Shade nets will deploy for 3 days with auto-retract.",
+    dialogDetails: [
+      { label: "Coverage", value: "Plot C — 3.2 ha" },
+      { label: "UV Reduction", value: "70%" },
+      { label: "Duration", value: "3 days" },
+    ],
   },
 ];
 
@@ -39,6 +62,7 @@ const severityColor: Record<string, string> = {
 
 const SmartAlerts = () => {
   const [tab, setTab] = useState("All");
+  const [dialogAlert, setDialogAlert] = useState<typeof alerts[0] | null>(null);
   const filtered = tab === "All" ? alerts : alerts.filter((a) => a.type === tab);
 
   return (
@@ -64,13 +88,35 @@ const SmartAlerts = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-muted-foreground">AI Confidence: {a.confidence}</span>
-                  <Button size="sm" variant="outline" className="h-7 text-xs">{a.action}</Button>
+                  <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setDialogAlert(a)}>
+                    {a.action}
+                  </Button>
                 </div>
               </div>
             ))}
           </TabsContent>
         </Tabs>
       </CardContent>
+
+      {dialogAlert && (
+        <ActionDialog
+          open={!!dialogAlert}
+          onOpenChange={(open) => !open && setDialogAlert(null)}
+          title={dialogAlert.dialogTitle}
+          description={dialogAlert.dialogDesc}
+          confirmLabel={dialogAlert.action}
+          variant="action"
+        >
+          <div className="space-y-2">
+            {dialogAlert.dialogDetails.map((d) => (
+              <div key={d.label} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                <span className="text-sm text-muted-foreground">{d.label}</span>
+                <span className="text-sm font-medium text-foreground">{d.value}</span>
+              </div>
+            ))}
+          </div>
+        </ActionDialog>
+      )}
     </Card>
   );
 };
