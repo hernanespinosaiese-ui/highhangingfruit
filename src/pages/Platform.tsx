@@ -49,7 +49,7 @@ const Platform = () => {
   return (
     <Layout>
       <section className="py-4 pb-24 md:pb-16">
-        <div className="container mx-auto px-4 lg:px-8 max-w-3xl">
+        <div className="container mx-auto px-4 lg:px-8">
           <PlatformNav activeTab={activeTab} onTabChange={setActiveTab} />
           {renderContent()}
         </div>

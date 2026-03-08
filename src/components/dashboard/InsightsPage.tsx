@@ -162,29 +162,31 @@ const InsightsPage = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Pest Photo Scan */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Camera size={16} className="text-accent" /> Pest Photo Scan
-          </CardTitle>
-          <p className="text-xs text-muted-foreground">Upload a leaf/fruit photo for AI pest identification and organic treatment recommendation.</p>
-        </CardHeader>
-        <CardContent>
-          <div
-            className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${
-              dragOver ? "border-primary bg-primary/5" : "border-border"
-            }`}
-            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-            onDragLeave={() => setDragOver(false)}
-            onDrop={(e) => { e.preventDefault(); setDragOver(false); }}
-          >
-            <Upload size={32} className="text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm font-medium text-foreground">📷 Tap to upload a photo</p>
-            <p className="text-xs text-muted-foreground mt-1">JPG, PNG up to 10MB</p>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Pest Photo Scan — only on All & Pest */}
+      {(tab === "All" || tab === "Pest") && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Camera size={16} className="text-accent" /> Pest Photo Scan
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">Upload a leaf/fruit photo for AI pest identification and organic treatment recommendation.</p>
+          </CardHeader>
+          <CardContent>
+            <div
+              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${
+                dragOver ? "border-primary bg-primary/5" : "border-border"
+              }`}
+              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={(e) => { e.preventDefault(); setDragOver(false); }}
+            >
+              <Upload size={32} className="text-muted-foreground mx-auto mb-3" />
+              <p className="text-sm font-medium text-foreground">📷 Tap to upload a photo</p>
+              <p className="text-xs text-muted-foreground mt-1">JPG, PNG up to 10MB</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
