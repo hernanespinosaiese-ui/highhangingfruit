@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Droplets, CloudSun, FlaskConical, AlertTriangle, Clock, Mountain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import Layout from "@/components/Layout";
 import Layout from "@/components/Layout";
 import heroImage from "@/assets/hero-mango-grove.jpg";
 
