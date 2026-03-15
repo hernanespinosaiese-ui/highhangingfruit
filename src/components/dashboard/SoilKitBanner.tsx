@@ -22,7 +22,7 @@ const SoilKitBanner = () => {
           variant="outline"
           size="sm"
           className="shrink-0 gap-1 text-xs"
-          onClick={() => navigate("/request-kit")}
+          onClick={() => navigate("/onboarding")}
         >
           Request Kit <ArrowRight size={12} />
         </Button>

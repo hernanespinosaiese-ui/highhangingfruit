@@ -95,7 +95,7 @@ const Index = () => {
             </motion.p>
             <motion.div custom={2} variants={fadeUp} className="flex flex-wrap gap-4">
               <Button asChild size="lg" className="text-base px-8">
-                <Link to="/request-kit">Request Your Free Soil Kit</Link>
+                <Link to="/onboarding">Request Your Free Soil Kit</Link>
               </Button>
               <Button
                 variant="outline"
@@ -208,7 +208,7 @@ const Index = () => {
             Request your soil kit today and get personalized insights within two weeks.
           </p>
           <Button asChild size="lg" variant="secondary" className="text-base px-10">
-            <Link to="/request-kit">Request Your Free Soil Kit</Link>
+            <Link to="/onboarding">Request Your Free Soil Kit</Link>
           </Button>
         </div>
       </section>
