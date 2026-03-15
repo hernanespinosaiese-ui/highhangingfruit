@@ -46,11 +46,16 @@ const Onboarding = () => {
   const progress = ((step + 1) / stepLabels.length) * 100;
 
   const next = () => {
-    if (step === 2 && plantingDate && plantingDate <= new Date()) {
-      setDateError("Planting date must be a future date.");
-      return;
+    if (step === 2) {
+      const newErrors = plots.map((p) =>
+        p.plantingDate && p.plantingDate <= new Date() ? "Planting date must be a future date." : ""
+      );
+      if (newErrors.some((e) => e)) {
+        setDateErrors(newErrors);
+        return;
+      }
+      setDateErrors(newErrors);
     }
-    setDateError("");
     if (step < stepLabels.length - 1) setStep(step + 1);
   };
   const prev = () => { if (step > 0) setStep(step - 1); };
