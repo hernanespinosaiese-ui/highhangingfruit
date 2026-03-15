@@ -167,7 +167,7 @@ const Onboarding = () => {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                               <div>
                                 <Label htmlFor="farmName">Farm Name</Label>
-                                <Input id="farmName" placeholder="Finca Los Mangos" required />
+                                <Input id="farmName" placeholder="Finca Los Mangos" required value={farmName} onChange={(e) => setFarmName(e.target.value)} maxLength={100} />
                               </div>
                               <div>
                                 <Label htmlFor="location">Location (City/Region)</Label>
