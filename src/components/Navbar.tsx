@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
-  { label: "Login to MyPlatform", to: "/platform" },
+  { label: "Login to MyPlatform", to: "/login" },
 ];
 
 const Navbar = () => {
