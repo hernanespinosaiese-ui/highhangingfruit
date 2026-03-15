@@ -23,6 +23,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/platform" element={<Platform />} />
           <Route path="/request-kit" element={<RequestKit />} />
+          <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />

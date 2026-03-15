@@ -79,7 +79,7 @@ const Navbar = () => {
             </Link>
           ))}
           <Button asChild size="sm" className="w-full mt-2">
-            <Link to="/request-kit" onClick={() => setMobileOpen(false)}>
+            <Link to="/onboarding" onClick={() => setMobileOpen(false)}>
               Request Your Free Soil Kit
             </Link>
           </Button>
