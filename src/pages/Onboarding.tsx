@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, Info, Leaf } from "lucide-react";
+import { CheckCircle, Info, Leaf, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,17 +24,38 @@ const stepLabels = [
 const Onboarding = () => {
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
-  const [plantingDate, setPlantingDate] = useState<Date>();
-  const [dateError, setDateError] = useState("");
+  const [plots, setPlots] = useState([{ variety: "", plantingDate: undefined as Date | undefined, plotSize: "" }]);
+  const [dateErrors, setDateErrors] = useState<string[]>([""]);
+
+  const addPlot = () => {
+    setPlots([...plots, { variety: "", plantingDate: undefined, plotSize: "" }]);
+    setDateErrors([...dateErrors, ""]);
+  };
+
+  const removePlot = (index: number) => {
+    setPlots(plots.filter((_, i) => i !== index));
+    setDateErrors(dateErrors.filter((_, i) => i !== index));
+  };
+
+  const updatePlot = (index: number, field: string, value: any) => {
+    const updated = [...plots];
+    (updated[index] as any)[field] = value;
+    setPlots(updated);
+  };
 
   const progress = ((step + 1) / stepLabels.length) * 100;
 
   const next = () => {
-    if (step === 2 && plantingDate && plantingDate <= new Date()) {
-      setDateError("Planting date must be a future date.");
-      return;
+    if (step === 2) {
+      const newErrors = plots.map((p) =>
+        p.plantingDate && p.plantingDate <= new Date() ? "Planting date must be a future date." : ""
+      );
+      if (newErrors.some((e) => e)) {
+        setDateErrors(newErrors);
+        return;
+      }
+      setDateErrors(newErrors);
     }
-    setDateError("");
     if (step < stepLabels.length - 1) setStep(step + 1);
   };
   const prev = () => { if (step > 0) setStep(step - 1); };
@@ -172,47 +193,86 @@ const Onboarding = () => {
                                 </p>
                               </div>
                             </div>
-                            <div>
-                              <Label htmlFor="variety">Mango Variety</Label>
-                              <Input id="variety" placeholder="e.g. Osteen, Kent, Keitt" required />
-                              <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                                <Leaf size={12} className="text-primary" />
-                                If planting more than one variety, please add additional plots below.
-                              </p>
-                            </div>
-                            <div>
-                              <Label>Planting Date</Label>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <Button
-                                    variant="outline"
-                                    className={cn(
-                                      "w-full justify-start text-left font-normal",
-                                      !plantingDate && "text-muted-foreground"
-                                    )}
-                                  >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {plantingDate ? format(plantingDate, "PPP") : "Select a planting date"}
-                                  </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
-                                  <Calendar
-                                    mode="single"
-                                    selected={plantingDate}
-                                    onSelect={(d) => { setPlantingDate(d); setDateError(""); }}
-                                    disabled={(date) => date <= new Date()}
-                                    initialFocus
-                                    className="p-3 pointer-events-auto"
+
+                            {plots.map((plot, i) => (
+                              <div key={i} className="space-y-4 p-4 rounded-lg border border-border bg-background">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-sm font-semibold text-foreground">Plot {i + 1}</span>
+                                  {plots.length > 1 && (
+                                    <Button type="button" variant="ghost" size="sm" onClick={() => removePlot(i)} className="text-destructive hover:text-destructive h-8 px-2">
+                                      <Trash2 size={14} className="mr-1" /> Remove
+                                    </Button>
+                                  )}
+                                </div>
+                                <div>
+                                  <Label htmlFor={`variety-${i}`}>Mango Variety</Label>
+                                  <Input
+                                    id={`variety-${i}`}
+                                    placeholder="e.g. Osteen, Kent, Keitt"
+                                    value={plot.variety}
+                                    onChange={(e) => updatePlot(i, "variety", e.target.value)}
+                                    required
                                   />
-                                </PopoverContent>
-                              </Popover>
-                              {dateError && <p className="text-sm text-destructive mt-1">{dateError}</p>}
-                              <p className="text-xs text-muted-foreground mt-1">Must be a future date.</p>
-                            </div>
-                            <div>
-                              <Label htmlFor="plotSize">Plot Size (hectares)</Label>
-                              <Input id="plotSize" type="number" step="0.1" min="0.1" placeholder="2.5" required />
-                            </div>
+                                  {i === 0 && (
+                                    <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                                      <Leaf size={12} className="text-primary" />
+                                      If planting more than one variety, add another plot below.
+                                    </p>
+                                  )}
+                                </div>
+                                <div>
+                                  <Label>Planting Date</Label>
+                                  <Popover>
+                                    <PopoverTrigger asChild>
+                                      <Button
+                                        variant="outline"
+                                        className={cn(
+                                          "w-full justify-start text-left font-normal",
+                                          !plot.plantingDate && "text-muted-foreground"
+                                        )}
+                                      >
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        {plot.plantingDate ? format(plot.plantingDate, "PPP") : "Select a planting date"}
+                                      </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                      <Calendar
+                                        mode="single"
+                                        selected={plot.plantingDate}
+                                        onSelect={(d) => {
+                                          updatePlot(i, "plantingDate", d);
+                                          const newErrors = [...dateErrors];
+                                          newErrors[i] = "";
+                                          setDateErrors(newErrors);
+                                        }}
+                                        disabled={(date) => date <= new Date()}
+                                        initialFocus
+                                        className="p-3 pointer-events-auto"
+                                      />
+                                    </PopoverContent>
+                                  </Popover>
+                                  {dateErrors[i] && <p className="text-sm text-destructive mt-1">{dateErrors[i]}</p>}
+                                  <p className="text-xs text-muted-foreground mt-1">Must be a future date.</p>
+                                </div>
+                                <div>
+                                  <Label htmlFor={`plotSize-${i}`}>Plot Size (hectares)</Label>
+                                  <Input
+                                    id={`plotSize-${i}`}
+                                    type="number"
+                                    step="0.1"
+                                    min="0.1"
+                                    placeholder="2.5"
+                                    value={plot.plotSize}
+                                    onChange={(e) => updatePlot(i, "plotSize", e.target.value)}
+                                    required
+                                  />
+                                </div>
+                              </div>
+                            ))}
+
+                            <Button type="button" variant="outline" className="w-full gap-2" onClick={addPlot}>
+                              <Plus size={16} /> Add Another Plot
+                            </Button>
                           </div>
                         )}
 
