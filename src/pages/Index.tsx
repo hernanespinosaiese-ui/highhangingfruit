@@ -96,10 +96,15 @@ const Index = () => {
             </motion.p>
             <motion.div custom={2} variants={fadeUp} className="flex flex-wrap gap-4">
               <Button asChild size="lg" className="text-base px-8">
-                <Link to="/request-kit">Request Your Soil Kit</Link>
+                <Link to="/request-kit">Request Your Free Soil Kit</Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="text-base px-8 border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground">
-                <Link to="/platform">Explore the Platform</Link>
+              <Button
+                variant="outline"
+                size="lg"
+                className="text-base px-8 border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground"
+                onClick={() => document.getElementById('solution-section')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Our Solution
               </Button>
             </motion.div>
           </motion.div>
