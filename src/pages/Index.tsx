@@ -4,7 +4,6 @@ import { Droplets, CloudSun, FlaskConical, AlertTriangle, Clock, Mountain } from
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Layout from "@/components/Layout";
-import Layout from "@/components/Layout";
 import heroImage from "@/assets/hero-mango-grove.jpg";
 
 const fadeUp = {
