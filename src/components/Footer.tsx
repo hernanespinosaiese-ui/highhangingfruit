@@ -32,7 +32,7 @@ const Footer = () => {
               {[
                 { label: "Home", to: "/" },
                 { label: "Platform", to: "/platform" },
-                { label: "Request Soil Kit", to: "/request-kit" },
+                { label: "Request Soil Kit", to: "/onboarding" },
                 { label: "About", to: "/about" },
                 { label: "Contact", to: "/contact" },
               ].map((link) => (
