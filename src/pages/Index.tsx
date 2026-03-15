@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { Droplets, CloudSun, FlaskConical, AlertTriangle, Clock, Mountain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Layout from "@/components/Layout";
 import heroImage from "@/assets/hero-mango-grove.jpg";
 
@@ -96,10 +95,15 @@ const Index = () => {
             </motion.p>
             <motion.div custom={2} variants={fadeUp} className="flex flex-wrap gap-4">
               <Button asChild size="lg" className="text-base px-8">
-                <Link to="/request-kit">Request Your Soil Kit</Link>
+                <Link to="/request-kit">Request Your Free Soil Kit</Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="text-base px-8 border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground">
-                <Link to="/platform">Explore the Platform</Link>
+              <Button
+                variant="outline"
+                size="lg"
+                className="text-base px-8 border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground"
+                onClick={() => document.getElementById('solution-section')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Our Solution
               </Button>
             </motion.div>
           </motion.div>
@@ -149,8 +153,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Three-Pillar Approach */}
-      <section className="py-24">
+      {/* Our Solution */}
+      <section id="solution-section" className="py-24">
         <div className="container mx-auto px-4 lg:px-8">
           <motion.div
             initial="hidden"
@@ -159,45 +163,38 @@ const Index = () => {
             className="text-center mb-16"
           >
             <motion.p custom={0} variants={fadeUp} className="text-primary font-semibold text-sm uppercase tracking-wider mb-3">
-              Our Approach
+              Our Solution
             </motion.p>
-            <motion.h2 custom={1} variants={fadeUp} className="text-3xl md:text-4xl font-bold text-foreground">
-              Three pillars for thriving farms
+            <motion.h2 custom={1} variants={fadeUp} className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-foreground max-w-4xl mx-auto">
+              Our solution to achieve thriving farms
             </motion.h2>
           </motion.div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-            className="max-w-3xl mx-auto"
-          >
-            <Accordion type="single" collapsible className="space-y-4">
-              {pillars.map((pillar, i) => (
-                <motion.div key={pillar.id} custom={i} variants={fadeUp}>
-                  <AccordionItem
-                    value={pillar.id}
-                    className="border rounded-xl px-6 bg-card shadow-sm data-[state=open]:shadow-md transition-shadow"
-                  >
-                    <AccordionTrigger className="hover:no-underline py-5">
-                      <div className="flex items-center gap-4 text-left">
-                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                          <pillar.icon className="text-primary" size={24} />
-                        </div>
-                        <div>
-                          <p className="font-semibold text-foreground text-base">{pillar.title}</p>
-                          <p className="text-sm text-muted-foreground">{pillar.summary}</p>
-                        </div>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground leading-relaxed pb-5 pl-16">
-                      {pillar.details}
-                    </AccordionContent>
-                  </AccordionItem>
-                </motion.div>
-              ))}
-            </Accordion>
-          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {pillars.map((pillar, i) => (
+              <motion.div
+                key={pillar.id}
+                custom={i}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+              >
+                <Card className="h-full border-none shadow-lg bg-card">
+                  <CardContent className="p-8 text-center">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-primary">
+                      {i + 1}
+                    </div>
+                    <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
+                      <pillar.icon className="text-primary" size={28} />
+                    </div>
+                    <h3 className="font-bold text-foreground text-lg mb-3">{pillar.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{pillar.details}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
