@@ -171,7 +171,7 @@ const Onboarding = () => {
                               </div>
                               <div>
                                 <Label htmlFor="location">Location (City/Region)</Label>
-                                <Input id="location" placeholder="Vélez-Málaga" required />
+                                <Input id="location" placeholder="Vélez-Málaga" required value={location} onChange={(e) => setLocation(e.target.value)} maxLength={100} />
                               </div>
                             </div>
                             <div>
