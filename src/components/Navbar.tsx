@@ -46,7 +46,7 @@ const Navbar = () => {
             </Link>
           ))}
           <Button asChild size="sm" className="ml-4">
-            <Link to="/request-kit">Request Your Free Soil Kit</Link>
+            <Link to="/onboarding">Request Your Free Soil Kit</Link>
           </Button>
         </nav>
 
