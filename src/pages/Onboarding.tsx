@@ -24,8 +24,24 @@ const stepLabels = [
 const Onboarding = () => {
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
-  const [plantingDate, setPlantingDate] = useState<Date>();
-  const [dateError, setDateError] = useState("");
+  const [plots, setPlots] = useState([{ variety: "", plantingDate: undefined as Date | undefined, plotSize: "" }]);
+  const [dateErrors, setDateErrors] = useState<string[]>([""]);
+
+  const addPlot = () => {
+    setPlots([...plots, { variety: "", plantingDate: undefined, plotSize: "" }]);
+    setDateErrors([...dateErrors, ""]);
+  };
+
+  const removePlot = (index: number) => {
+    setPlots(plots.filter((_, i) => i !== index));
+    setDateErrors(dateErrors.filter((_, i) => i !== index));
+  };
+
+  const updatePlot = (index: number, field: string, value: any) => {
+    const updated = [...plots];
+    (updated[index] as any)[field] = value;
+    setPlots(updated);
+  };
 
   const progress = ((step + 1) / stepLabels.length) * 100;
 
