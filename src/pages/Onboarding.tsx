@@ -64,7 +64,21 @@ const Onboarding = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    // Store session data and redirect to platform
+    const sessionData = {
+      farmName: farmName || "My Farm",
+      region: location || "South Asia",
+      farmSize: "",
+      plots: plots.map((p, i) => ({
+        id: String(i + 1),
+        variety: p.variety,
+        plantingDate: p.plantingDate?.toISOString() || "",
+        size: p.plotSize,
+      })),
+      hasSoilKit: true,
+    };
+    sessionStorage.setItem("hhf_farm_session", JSON.stringify(sessionData));
+    navigate("/platform");
   };
 
   return (
