@@ -12,7 +12,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const stepLabels = [
   "Create Your Account",
@@ -22,11 +22,13 @@ const stepLabels = [
 ];
 
 const Onboarding = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [plots, setPlots] = useState([{ variety: "", plantingDate: undefined as Date | undefined, plotSize: "" }]);
   const [dateErrors, setDateErrors] = useState<string[]>([""]);
-
+  const [farmName, setFarmName] = useState("");
+  const [location, setLocation] = useState("");
   const addPlot = () => {
     setPlots([...plots, { variety: "", plantingDate: undefined, plotSize: "" }]);
     setDateErrors([...dateErrors, ""]);
@@ -62,7 +64,21 @@ const Onboarding = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    // Store session data and redirect to platform
+    const sessionData = {
+      farmName: farmName || "My Farm",
+      region: location || "South Asia",
+      farmSize: "",
+      plots: plots.map((p, i) => ({
+        id: String(i + 1),
+        variety: p.variety,
+        plantingDate: p.plantingDate?.toISOString() || "",
+        size: p.plotSize,
+      })),
+      hasSoilKit: true,
+    };
+    sessionStorage.setItem("hhf_farm_session", JSON.stringify(sessionData));
+    navigate("/platform");
   };
 
   return (
@@ -83,15 +99,8 @@ const Onboarding = () => {
 
       <div className="flex-1 flex items-center justify-center py-8 px-4">
         <div className="w-full max-w-2xl">
-          {submitted ? (
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-16">
-              <CheckCircle size={64} className="text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-foreground mb-2">Welcome to MyPlatform!</h2>
-              <p className="text-muted-foreground mb-6">Your account has been set up. We'll send your free soil kit shortly.</p>
-              <Button asChild>
-                <Link to="/platform">Go to MyPlatform</Link>
-              </Button>
-            </motion.div>
+          {false ? (
+            <div />
           ) : (
             <>
               {/* Progress */}
@@ -158,11 +167,11 @@ const Onboarding = () => {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                               <div>
                                 <Label htmlFor="farmName">Farm Name</Label>
-                                <Input id="farmName" placeholder="Finca Los Mangos" required />
+                                <Input id="farmName" placeholder="Finca Los Mangos" required value={farmName} onChange={(e) => setFarmName(e.target.value)} maxLength={100} />
                               </div>
                               <div>
                                 <Label htmlFor="location">Location (City/Region)</Label>
-                                <Input id="location" placeholder="Vélez-Málaga" required />
+                                <Input id="location" placeholder="Vélez-Málaga" required value={location} onChange={(e) => setLocation(e.target.value)} maxLength={100} />
                               </div>
                             </div>
                             <div>
