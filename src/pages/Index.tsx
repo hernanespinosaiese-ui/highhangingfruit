@@ -208,7 +208,7 @@ const Index = () => {
             Request your soil kit today and get personalized insights within two weeks.
           </p>
           <Button asChild size="lg" variant="secondary" className="text-base px-10">
-            <Link to="/request-kit">Request Your Soil Kit</Link>
+            <Link to="/request-kit">Request Your Free Soil Kit</Link>
           </Button>
         </div>
       </section>
