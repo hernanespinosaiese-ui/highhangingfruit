@@ -22,11 +22,13 @@ const stepLabels = [
 ];
 
 const Onboarding = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [plots, setPlots] = useState([{ variety: "", plantingDate: undefined as Date | undefined, plotSize: "" }]);
   const [dateErrors, setDateErrors] = useState<string[]>([""]);
-
+  const [farmName, setFarmName] = useState("");
+  const [location, setLocation] = useState("");
   const addPlot = () => {
     setPlots([...plots, { variety: "", plantingDate: undefined, plotSize: "" }]);
     setDateErrors([...dateErrors, ""]);
