@@ -99,15 +99,8 @@ const Onboarding = () => {
 
       <div className="flex-1 flex items-center justify-center py-8 px-4">
         <div className="w-full max-w-2xl">
-          {submitted ? (
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-16">
-              <CheckCircle size={64} className="text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-foreground mb-2">Welcome to MyPlatform!</h2>
-              <p className="text-muted-foreground mb-6">Your account has been set up. We'll send your free soil kit shortly.</p>
-              <Button asChild>
-                <Link to="/platform">Go to MyPlatform</Link>
-              </Button>
-            </motion.div>
+          {false ? (
+            <div />
           ) : (
             <>
               {/* Progress */}
