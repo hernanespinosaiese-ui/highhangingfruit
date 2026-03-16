@@ -387,8 +387,23 @@ const Platform = () => {
             <div ref={sectionRefs.insurance} id="insurance" className="scroll-mt-32 space-y-4">
               <div className="flex items-center gap-2">
                 <Shield size={20} className="text-primary" />
-                <h2 className="text-xl font-bold text-foreground">Insurance & Resilience</h2>
+                <h2 className="text-xl font-bold text-foreground">Leverage Your Data for Lower Insurance Premiums</h2>
               </div>
+
+              {/* Savings Callout */}
+              <Card className="border-2 border-primary/20 bg-primary/5">
+                <CardContent className="p-5 flex items-start gap-4">
+                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <Shield size={28} className="text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-foreground leading-relaxed">
+                      Your proactive management reduces risk. Farmers using High Hanging Fruit insights can save up to{" "}
+                      <span className="font-bold text-primary text-base">15% on annual premiums</span>.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
 
               {/* Risk Profile */}
               <Card>

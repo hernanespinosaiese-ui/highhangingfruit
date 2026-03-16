@@ -20,7 +20,7 @@ const Login = () => {
       plots: [],
       hasSoilKit: true,
     }));
-    navigate("/platform");
+    navigate("/loading");
   };
 
   return (
