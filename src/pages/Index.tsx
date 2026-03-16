@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Droplets, CloudSun, FlaskConical, AlertTriangle, Clock, Mountain } from "lucide-react";
+import { Droplets, CloudSun, FlaskConical, AlertTriangle, Clock, Mountain, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Layout from "@/components/Layout";
@@ -153,8 +153,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Our Solution */}
-      <section id="solution-section" className="py-24">
+      {/* Our Solution — Value Pillars */}
+      <section id="solution-section" className="py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
           <motion.div
             initial="hidden"
@@ -180,21 +180,47 @@ const Index = () => {
                 whileInView="visible"
                 viewport={{ once: true, margin: "-50px" }}
               >
-                <Card className="h-full border-none shadow-lg bg-card">
-                  <CardContent className="p-8 text-center">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-primary">
-                      {i + 1}
+                <Card className="h-full border border-primary/10 shadow-xl bg-card hover:shadow-2xl transition-shadow">
+                  <CardContent className="p-8 flex flex-col items-center text-center">
+                    {/* Icon at top */}
+                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
+                      <pillar.icon className="text-primary" size={32} />
                     </div>
-                    <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
-                      <pillar.icon className="text-primary" size={28} />
-                    </div>
-                    <h3 className="font-bold text-foreground text-lg mb-3">{pillar.title}</h3>
+                    {/* Number + Title */}
+                    <h3 className="text-2xl font-extrabold text-foreground mb-4">
+                      <span className="text-primary">{i + 1}.</span> {pillar.title}
+                    </h3>
+                    {/* Description */}
                     <p className="text-sm text-muted-foreground leading-relaxed">{pillar.details}</p>
                   </CardContent>
                 </Card>
               </motion.div>
             ))}
           </div>
+
+          {/* Insurance Callout */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            custom={0}
+            variants={fadeUp}
+            className="mt-16"
+          >
+            <Card className="border-2 border-primary/20 bg-primary/5 shadow-lg">
+              <CardContent className="p-8 flex items-start gap-5">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <Shield className="text-primary" size={24} />
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold text-foreground mb-2">Leverage your data for lower premiums</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Based on our deep analysis of your plot, following our specific actions and climate recommendations can significantly lower your risk profile, allowing you to save on agricultural insurance premiums through our partners.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </section>
 

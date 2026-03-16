@@ -13,10 +13,9 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock login — store session and redirect
     sessionStorage.setItem("hhf_farm_session", JSON.stringify({
       farmName: "My Farm",
-      region: "South Asia",
+      region: "Vélez-Málaga",
       farmSize: "",
       plots: [],
       hasSoilKit: true,
@@ -60,7 +59,6 @@ const Login = () => {
                     placeholder="maria@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    required
                     maxLength={255}
                   />
                 </div>
@@ -72,8 +70,6 @@ const Login = () => {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={8}
                     maxLength={128}
                   />
                 </div>
