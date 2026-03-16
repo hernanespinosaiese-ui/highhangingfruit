@@ -84,7 +84,7 @@ const Onboarding = () => {
       hasSoilKit: true,
     };
     sessionStorage.setItem("hhf_farm_session", JSON.stringify(sessionData));
-    navigate("/platform");
+    navigate("/loading");
   };
 
   return (
